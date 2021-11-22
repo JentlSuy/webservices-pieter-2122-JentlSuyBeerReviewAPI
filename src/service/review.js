@@ -1,6 +1,7 @@
 const uuid = require("uuid");
 const { getLogger } = require("../core/logging");
-let { REVIEWS, BEERS, BREWERIES } = require("../data/mock_data");
+let { REVIEWS, BEERS } = require("../data/mock_data");
+// let { REVIEWS, BEERS, BREWERIES } = require("../data/mock_data");
 
 const getAll = () => {
   return Promise.resolve({
