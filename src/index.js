@@ -1,11 +1,10 @@
-const config = require("config");
 const Koa = require("koa");
-const Router = require("@koa/router");
-const bodyParser = require("koa-bodyparser");
+const config = require("config");
 const koaCors = require("@koa/cors");
-const { getLogger } = require("./core/logging");
+const bodyParser = require("koa-bodyparser");
+const { initializeLogger, getLogger } = require("./core/logging");
 const { initializeData } = require("./data");
-const reviewService = require("./service/review");
+const installRest = require("./rest");
 
 const PORT = config.get("port");
 const HOST = config.get("host");
@@ -20,9 +19,18 @@ console.log(`NODE_ENV = ${NODE_ENV}`);
 console.log(`log level = ${LOG_LEVEL}, log disabled = ${LOG_DISABLED}`);
 
 async function main() {
-  const app = new Koa();
-  const logger = getLogger();
+  initializeLogger({
+    level: LOG_LEVEL,
+    disabled: LOG_DISABLED,
+    isProduction: NODE_ENV === "production",
+    defaultMeta: { NODE_ENV },
+  });
 
+  await initializeData();
+
+  const app = new Koa();
+
+  //CORS
   app.use(
     koaCors({
       origin: (ctx) => {
@@ -36,37 +44,10 @@ async function main() {
     })
   );
 
+  const logger = getLogger();
   app.use(bodyParser());
 
-  const router = new Router();
-
-  router.get("/api/reviews", async (ctx) => {
-    ctx.body = await reviewService.getAll();
-  });
-
-  router.post("/api/reviews", async (ctx) => {
-    const newReview = await reviewService.create({
-      ...ctx.request.body,
-      date: new Date(ctx.request.body.date),
-    });
-    ctx.body = newReview;
-  });
-
-  router.get("/api/reviews/:id", async (ctx) => {
-    ctx.body = await reviewService.getById(ctx.params.id);
-  });
-
-  router.put("/api/reviews/:id", async (ctx) => {
-    ctx.body = await reviewService.updateById(ctx.params.id, {
-      ...ctx.request.body,
-      date: new Date(ctx.request.body.date),
-    });
-  });
-
-  router.delete("/api/reviews/:id", async (ctx) => {
-    reviewService.deleteById(ctx.params.id);
-    ctx.status = 204;
-  });
+  installRest(app);
 
   /*
 
@@ -77,8 +58,6 @@ async function main() {
   - DATABANK (MySQL)
 
 */
-
-  app.use(router.routes()).use(router.allowedMethods());
 
   // GET /api/transactions -> alle transacties
   // GET /api/transactions/34 -> één specifieke transactie

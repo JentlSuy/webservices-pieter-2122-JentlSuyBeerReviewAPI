@@ -10,19 +10,19 @@ module.exports = {
       {
         id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe03",
         name: "Carlsberg",
-        percentage: 5.5,
+        percentage: 5,
         // brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr03",
       },
       {
         id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe04",
         name: "Tripel Karmeliet",
-        percentage: 8.4,
+        percentage: 8,
         // brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr04",
       },
       {
         id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe05",
         name: "Westmalle Dubbel",
-        percentage: 7.0,
+        percentage: 7,
         // brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr05",
       },
     ]);

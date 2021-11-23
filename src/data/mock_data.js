@@ -16,19 +16,19 @@ let BEERS = [
     id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe01",
     name: "Stella Artois",
     percentage: 5.2,
-    brewery: {
-      id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr01",
-      name: "AB InBev",
-    },
+    // brewery: {
+    //   id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr01",
+    //   name: "AB InBev",
+    // },
   },
   {
     id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe02",
     name: "Duvel",
     percentage: 8.5,
-    brewery: {
-      id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr02",
-      name: "Duvel Moortgat",
-    },
+    // brewery: {
+    //   id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr02",
+    //   name: "Duvel Moortgat",
+    // },
   },
 ];
 

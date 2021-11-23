@@ -7,6 +7,8 @@ module.exports = {
 
       table.integer("rating").notNullable();
 
+      table.string("description", 255).notNullable();
+
       table.dateTime("date").notNullable();
 
       table.uuid("user_id").notNullable();
