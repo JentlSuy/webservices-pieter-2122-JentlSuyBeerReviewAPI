@@ -1,13 +1,13 @@
-const config = require('config');
-const { getChildLogger } = require('../core/logging');
-const beerRepository = require('../repository/beer');
+const config = require("config");
+const { getChildLogger } = require("../core/logging");
+const beerRepository = require("../repository/beer");
 
-const DEFAULT_PAGINATION_LIMIT = config.get('pagination.limit');
-const DEFAULT_PAGINATION_OFFSET = config.get('pagination.offset');
+const DEFAULT_PAGINATION_LIMIT = config.get("pagination.limit");
+const DEFAULT_PAGINATION_OFFSET = config.get("pagination.offset");
 
 const debugLog = (message, meta = {}) => {
-	if (!this.logger) this.logger = getChildLogger('beer-service');
-	this.logger.debug(message, meta);
+  if (!this.logger) this.logger = getChildLogger("beer-service");
+  this.logger.debug(message, meta);
 };
 
 /**
@@ -17,23 +17,31 @@ const debugLog = (message, meta = {}) => {
  * @param {number} [offset] - Nr of beers to skip.
  */
 const getAll = async (
-	limit = DEFAULT_PAGINATION_LIMIT,
-	offset = DEFAULT_PAGINATION_OFFSET,
+  limit = DEFAULT_PAGINATION_LIMIT,
+  offset = DEFAULT_PAGINATION_OFFSET
 ) => {
-	debugLog('Fetching all beers', { limit, offset });
-	const data = await beerRepository.findAll({ limit, offset });
-	const count = await beerRepository.findCount();
-	return { data, count, limit, offset };
+  debugLog("Fetching all beers", { limit, offset });
+  const data = await beerRepository.findAll({ limit, offset });
+  const count = await beerRepository.findCount();
+  return { data, count, limit, offset };
 };
 
 /**
  * Get the beer with the given `id`.
  *
  * @param {string} id - Id of the beer to get.
+ * @throws {ServiceError} One of:
+ * - NOT_FOUND: No beer with the given id could be found.
  */
-const getById = (id) => {
-	debugLog(`Fetching beer with id ${id}`);
-	return beerRepository.findById(id);
+const getById = async (id) => {
+  debugLog(`Fetching beer with id ${id}`);
+  const beer = await beerRepository.findById(id);
+
+  if (!beer) {
+    throw new Error(`No beer with id ${id} exists`, { id });
+  }
+
+  return beer;
 };
 
 /**
@@ -44,9 +52,9 @@ const getById = (id) => {
  * @param {number} [beer.percentage] - Alcohol percentage of the beer.
  */
 const create = ({ name, rating }) => {
-	const newBeer = { name, rating };
-	debugLog('Creating new beer', newBeer);
-	return beerRepository.create(newBeer);
+  const newBeer = { name, rating };
+  debugLog("Creating new beer", newBeer);
+  return beerRepository.create(newBeer);
 };
 
 /**
@@ -58,9 +66,9 @@ const create = ({ name, rating }) => {
  * @param {number} [beer.percentage] - Alcohol percentage of the beer.
  */
 const updateById = (id, { name, rating }) => {
-	const updatedBeer = { name, rating };
-	debugLog(`Updating beer with id ${id}`, updatedBeer);
-	return beerRepository.updateById(id, updatedBeer);
+  const updatedBeer = { name, rating };
+  debugLog(`Updating beer with id ${id}`, updatedBeer);
+  return beerRepository.updateById(id, updatedBeer);
 };
 
 /**
@@ -69,14 +77,14 @@ const updateById = (id, { name, rating }) => {
  * @param {string} id - Id of the beer to delete.
  */
 const deleteById = async (id) => {
-	debugLog(`Deleting beer with id ${id}`);
-	await beerRepository.deleteById(id);
+  debugLog(`Deleting beer with id ${id}`);
+  await beerRepository.deleteById(id);
 };
 
 module.exports = {
-	getAll,
-	getById,
-	create,
-	updateById,
-	deleteById,
+  getAll,
+  getById,
+  create,
+  updateById,
+  deleteById,
 };

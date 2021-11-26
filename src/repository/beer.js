@@ -1,4 +1,6 @@
+const uuid = require('uuid');
 const { tables, getKnex } = require("../data/index");
+const { getChildLogger } = require("../core/logging");
 
 const findAll = ({ limit, offset }) => {
   return getKnex()(tables.beer)
@@ -9,7 +11,7 @@ const findAll = ({ limit, offset }) => {
 };
 
 /**
- * Find a place with the given `name`.
+ * Find a beer with the given `name`.
  *
  * @param {string} name - Name to look for.
  */
@@ -18,7 +20,7 @@ const findByName = (name) => {
 };
 
 /**
- * Find a place with the given `id`.
+ * Find a beer with the given `id`.
  *
  * @param {string} id - Id of the place to find.
  */
@@ -27,7 +29,7 @@ const findById = (id) => {
 };
 
 /**
- * Calculate the total number of places.
+ * Calculate the total number of beers.
  */
 const findCount = async () => {
   const [count] = await getKnex()(tables.beer).count();
@@ -39,16 +41,18 @@ const findCount = async () => {
  *
  * @param {object} beer - Beer to create.
  * @param {string} beer.name - Name of the beer.
+ * @param {string} beer.brewery_id - Id of the brewery
  * @param {number} [beer.percentage] - Alcohol percentage of the beer
  *
  * @returns {Promise<string>} Created beer's id
  */
-const create = async ({ name, percentage }) => {
+const create = async ({ name, brewery_id, percentage }) => {
   try {
     const id = uuid.v4();
     await getKnex()(tables.beer).insert({
       id,
       name,
+      brewery_id,
       percentage,
     });
 

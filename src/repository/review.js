@@ -1,4 +1,6 @@
+const uuid = require("uuid");
 const { tables, getKnex } = require("../data/index");
+const { getChildLogger } = require("../core/logging");
 
 const SELECT_COLUMNS = [
   `${tables.review}.id`,
@@ -106,7 +108,7 @@ const create = async ({ rating, description, date, beerId, userId }) => {
  * @param {object} review - The review data to save.
  * @param {string} [review.rating] - Rating of the beer that is in the review.
  * @param {string} [review.description] - Description of the review.
- * @param {Date} [review.date] - Date of the transaction.
+ * @param {Date} [review.date] - Date of the review.
  * @param {string} [review.beerId] - Id of the beer that has been reviewed.
  * @param {string} [review.userId] - Id of the user who did the review.
  *
@@ -117,7 +119,7 @@ const updateById = async (
   { rating, description, date, beerId, userId }
 ) => {
   try {
-    await getKnex()(tables.transaction)
+    await getKnex()(tables.review)
       .update({
         rating,
         description,

@@ -1,11 +1,11 @@
-const config = require('config');
-const knex = require('knex');
-const { join } = require('path');
+const config = require("config");
+const knex = require("knex");
+const { join } = require("path");
 
-const { getChildLogger } = require('../core/logging');
+const { getChildLogger } = require("../core/logging");
 
-const NODE_ENV = config.get('env');
-const isDevelopment = NODE_ENV === 'development';
+const NODE_ENV = config.get("env");
+const isDevelopment = NODE_ENV === "development";
 
 const DATABASE_CLIENT = config.get("database.client");
 const DATABASE_NAME = config.get("database.name");
@@ -146,7 +146,7 @@ const tables = Object.freeze({
   review: "reviews",
   user: "users",
   beer: "beers",
-  //   brewery: "brewery",
+  brewery: "breweries",
 });
 
 module.exports = {

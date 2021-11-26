@@ -2,6 +2,7 @@ const config = require("config");
 const { getChildLogger } = require("../core/logging");
 const reviewRepository = require("../repository/review");
 const userService = require("./user");
+const beerService = require("./beer");
 
 const DEFAULT_PAGINATION_LIMIT = config.get("pagination.limit");
 const DEFAULT_PAGINATION_OFFSET = config.get("pagination.offset");
@@ -58,19 +59,36 @@ const getById = async (id) => {
  * @param {string} review.beerId - Id of the beer that was reviewed.
  * @param {string} review.user - Name of the user who did the review.
  */
-const create = async ({ rating, description, date, beerId, user }) => {
-  debugLog("Creating new review", { rating, description, date, beerId, user });
+const create = async ({ rating, description, date, beerId, userId }) => {
+  debugLog("Creating new review", { rating, description, date, beerId, userId });
 
-  // For now simply create a new user every time
-  const { id: userId } = await userService.register({ name: user });
+  let doUpdate = true;
+  try {
+    const beerError = await beerService.getById(beerId);
+  } catch {
+    debugLog(`No beer found with id ${beerId}`);
+    doUpdate = false;
+    return `No beer found with id ${beerId}`;
+    //TODO ERROR STATUS CODE!!!
+  }
+  try {
+    const userError = await userService.getById(userId);
+  } catch {
+    debugLog(`No user found with id ${userId}`);
+    doUpdate = false;
+    return `No user found with id ${userId}`;
+    //TODO ERROR STATUS CODE!!!
+  }
 
-  return reviewRepository.create({
-    rating,
-    description,
-    date,
-    beerId,
-    userId,
-  });
+  if (doUpdate) {
+    return reviewRepository.create({
+      rating,
+      description,
+      date,
+      beerId,
+      userId,
+    });
+  }
 };
 
 /**
@@ -81,27 +99,47 @@ const create = async ({ rating, description, date, beerId, user }) => {
  * @param {string} [review.rating] - Rating of the beer.
  * @param {Date} [review.date] - Date of the review.
  * @param {string} [review.beerId] - Id of the beer the rwas reviewed.
- * @param {string} [review.user] - Name of the user who did the review.
+ * @param {string} [review.userId] - Id of the user who did the review.
  */
-const updateById = async (id, { rating, description, date, beerId, user }) => {
+const updateById = async (
+  id,
+  { rating, description, date, beerId, userId }
+) => {
   debugLog(`Updating review with id ${id}`, {
-    rating,
-    description,
-    date,
-    beerId,
-    user,
-  });
-
-  // For now simply create a new user every time
-  const { id: userId } = await userService.register({ name: user });
-
-  return reviewRepository.updateById(id, {
     rating,
     description,
     date,
     beerId,
     userId,
   });
+
+  let doUpdate = true;
+  try {
+    const beerError = await beerService.getById(beerId);
+  } catch {
+    debugLog(`No beer found with id ${beerId}`);
+    doUpdate = false;
+    return `No beer found with id ${beerId}`;
+    //TODO ERROR STATUS CODE!!!
+  }
+  try {
+    const userError = await userService.getById(userId);
+  } catch {
+    debugLog(`No user found with id ${userId}`);
+    doUpdate = false;
+    return `No user found with id ${userId}`;
+    //TODO ERROR STATUS CODE!!!
+  }
+
+  if (doUpdate) {
+    return reviewRepository.updateById(id, {
+      rating,
+      description,
+      date,
+      beerId,
+      userId,
+    });
+  }
 };
 
 /**
