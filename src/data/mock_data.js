@@ -1,3 +1,5 @@
+// WORDT NIET MEER GEBRUIKT DOOR SEEDER
+
 // let BREWERIES = [
 //   {
 //     id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr01",

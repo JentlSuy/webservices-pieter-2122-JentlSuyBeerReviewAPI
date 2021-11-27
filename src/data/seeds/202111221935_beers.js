@@ -10,13 +10,13 @@ module.exports = {
       {
         id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe01",
         name: "Carlsberg",
-        percentage: 5,
+        percentage: 5.5,
         brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr01",
       },
       {
         id: "7f28c5f9-d711-4cd6-ac15-d13d71abbe02",
         name: "Tripel Karmeliet",
-        percentage: 8,
+        percentage: 8.4,
         brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr02",
       },
       {

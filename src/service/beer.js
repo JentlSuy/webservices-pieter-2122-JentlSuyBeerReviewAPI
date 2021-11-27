@@ -1,6 +1,7 @@
 const config = require("config");
 const { getChildLogger } = require("../core/logging");
 const beerRepository = require("../repository/beer");
+const breweryService = require("./brewery");
 
 const DEFAULT_PAGINATION_LIMIT = config.get("pagination.limit");
 const DEFAULT_PAGINATION_OFFSET = config.get("pagination.offset");
@@ -50,11 +51,33 @@ const getById = async (id) => {
  * @param {object} beer - Beer to create.
  * @param {string} beer.name - Name of the beer.
  * @param {number} [beer.percentage] - Alcohol percentage of the beer.
+ * @param {number} [beer.brewery_id] - Id of the brewery of the beer.
  */
-const create = ({ name, rating }) => {
-  const newBeer = { name, rating };
+const create = async ({ name, percentage, brewery_id }) => {
+  const newBeer = { name, percentage, brewery_id };
   debugLog("Creating new beer", newBeer);
-  return beerRepository.create(newBeer);
+
+  let doUpdate = true;
+  try {
+    const breweryError = await breweryService.getById(brewery_id);
+  } catch {
+    debugLog(`No brewery found with id ${brewery_id}`);
+    doUpdate = false;
+    return `No brewery found with id ${brewery_id}`;
+    //TODO ERROR STATUS CODE!!!
+  }
+
+  if (checkPercentageError(percentage)) {
+    message =
+      "The alcohol percentage can not be larger then 100 % or smaller then 0 %.";
+    debugLog(message);
+    doUpdate = false;
+    return message;
+  }
+
+  if (doUpdate) {
+    return beerRepository.create(newBeer);
+  }
 };
 
 /**
@@ -64,11 +87,33 @@ const create = ({ name, rating }) => {
  * @param {object} beer - Beer to save.
  * @param {string} [beer.name] - Name of the beer.
  * @param {number} [beer.percentage] - Alcohol percentage of the beer.
+ * @param {number} [beer.brewery_id] - Id of the brewery of the beer.
  */
-const updateById = (id, { name, rating }) => {
-  const updatedBeer = { name, rating };
+const updateById = async (id, { name, percentage, brewery_id }) => {
+  const updatedBeer = { name, percentage, brewery_id };
   debugLog(`Updating beer with id ${id}`, updatedBeer);
-  return beerRepository.updateById(id, updatedBeer);
+
+  let doUpdate = true;
+  try {
+    const breweryError = await breweryService.getById(brewery_id);
+  } catch {
+    debugLog(`No brewery found with id ${brewery_id}`);
+    doUpdate = false;
+    return `No brewery found with id ${brewery_id}`;
+    //TODO ERROR STATUS CODE!!!
+  }
+
+  if (checkPercentageError(percentage)) {
+    message =
+      "The alcohol percentage can not be larger then 100 % or smaller then 0 %.";
+    debugLog(message);
+    doUpdate = false;
+    return message;
+  }
+
+  if (doUpdate) {
+    return beerRepository.updateById(id, updatedBeer);
+  }
 };
 
 /**
@@ -80,6 +125,10 @@ const deleteById = async (id) => {
   debugLog(`Deleting beer with id ${id}`);
   await beerRepository.deleteById(id);
 };
+
+function checkPercentageError(percentage) {
+  if (percentage > 100 || percentage < 0) return true;
+}
 
 module.exports = {
   getAll,

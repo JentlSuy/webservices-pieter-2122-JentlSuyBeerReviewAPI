@@ -72,15 +72,17 @@ const create = async ({ name, brewery_id, percentage }) => {
  * @param {string} id - Id of the beer to update.
  * @param {object} beer - Beer to create.
  * @param {string} [beer.name] - Name of the place.
+ * @param {string} beer.brewery_id - Id of the brewery
  * @param {number} [beer.percentage] - Alcohol percentage of the beer
  *
  * @returns {Promise<string>} Beers's id
  */
-const updateById = async (id, { name, percentage }) => {
+const updateById = async (id, { name, brewery_id, percentage }) => {
   try {
     await getKnex()(tables.beer)
       .update({
         name,
+        brewery_id,
         percentage,
       })
       .where("id", id);

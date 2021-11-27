@@ -49,12 +49,12 @@ const getById = async (id) => {
  *
  * @param {object} brewery - Brewery to create.
  * @param {string} brewery.name - Name of the brewery.
- * @param {number} [brewery.percentage] - Alcohol percentage of the brewery.
+ * @param {string} [brewery.country] - Country of the brewery.
  */
-const create = ({ name, rating }) => {
-  const newBeer = { name, rating };
-  debugLog("Creating new brewery", newBeer);
-  return beerRepository.create(newBeer);
+const create = ({ name, country }) => {
+  const newBrewery = { name, country };
+  debugLog("Creating new brewery", newBrewery);
+  return beerRepository.create(newBrewery);
 };
 
 /**
@@ -63,12 +63,12 @@ const create = ({ name, rating }) => {
  * @param {string} id - Id of the brewery to update.
  * @param {object} brewery - Brewery to save.
  * @param {string} [brewery.name] - Name of the brewery.
- * @param {number} [brewery.percentage] - Alcohol percentage of the brewery.
+ * @param {string} [brewery.country] - Country of the brewery.
  */
-const updateById = (id, { name, rating }) => {
-  const updatedBeer = { name, rating };
-  debugLog(`Updating brewery with id ${id}`, updatedBeer);
-  return beerRepository.updateById(id, updatedBeer);
+const updateById = (id, { name, country }) => {
+  const updatedBrewery = { name, country };
+  debugLog(`Updating brewery with id ${id}`, updatedBrewery);
+  return beerRepository.updateById(id, updatedBrewery);
 };
 
 /**

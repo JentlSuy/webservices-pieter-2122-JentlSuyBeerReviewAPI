@@ -1,5 +1,5 @@
 const Router = require('@koa/router');
-const beerService = require('../service/beer');
+const breweryService = require('../service/brewery');
 
 const getAllBreweries = async (ctx) => {
 	ctx.body = await breweryService.getAll();
