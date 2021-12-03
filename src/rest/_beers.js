@@ -8,9 +8,14 @@ const getAllBeers = async (ctx) => {
 };
 
 const createBeer = async (ctx) => {
+  if (ctx.request.body.percentage < 0 || ctx.request.body.percentage > 100) {
+    ctx.status = 500
+  } else {
+    ctx.status = 201;
+  }
   const newBeer = await beerService.create(ctx.request.body);
   ctx.body = newBeer;
-  ctx.status=201;
+ 
 };
 
 const getBeerById = async (ctx) => {

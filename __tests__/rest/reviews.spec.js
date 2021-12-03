@@ -63,7 +63,7 @@ const dataToDelete = {
   users: ["7f28c5f9-d711-4cd6-ac15-d13d71abff80"],
 };
 
-describe("Review", () => {
+describe("Reviews", () => {
   let server; // de server
   let request; // waarmee we HTTP requests gaan doen
   let knex; // de huidige Knex instantie
