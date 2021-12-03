@@ -1,10 +1,10 @@
-const Router = require('@koa/router');
-const userService = require('../service/user');
+const Router = require("@koa/router");
+const userService = require("../service/user");
 
 const getAllUsers = async (ctx) => {
   const users = await userService.getAll(
     ctx.query.limit && Number(ctx.query.limit),
-    ctx.query.offset && Number(ctx.query.offset),
+    ctx.query.offset && Number(ctx.query.offset)
   );
   ctx.body = users;
 };
@@ -31,15 +31,13 @@ const deleteUserById = async (ctx) => {
  */
 module.exports = function installUsersRoutes(app) {
   const router = new Router({
-    prefix: '/users',
+    prefix: "/users",
   });
 
-  router.get('/', getAllUsers);
-  router.get('/:id', getUserById);
-  router.put('/:id', updateUserById);
-  router.delete('/:id', deleteUserById);
+  router.get("/", getAllUsers);
+  router.get("/:id", getUserById);
+  router.put("/:id", updateUserById);
+  router.delete("/:id", deleteUserById);
 
-  app
-    .use(router.routes())
-    .use(router.allowedMethods());
+  app.use(router.routes()).use(router.allowedMethods());
 };

@@ -1,32 +1,35 @@
-const Router = require('@koa/router');
-const reviewService = require('../service/review');
+const Router = require("@koa/router");
+const reviewService = require("../service/review");
 
 const getAllReviews = async (ctx) => {
-	ctx.body = await reviewService.getAll();
+  const limit = ctx.query.limit && Number(ctx.query.limit);
+  const offset = ctx.query.offset && Number(ctx.query.offset);
+  ctx.body = await reviewService.getAll(limit, offset);
 };
 
 const createReview = async (ctx) => {
-	const newReview = await reviewService.create({
-		...ctx.request.body,
-		date: new Date(ctx.request.body.date),
-	});
-	ctx.body = newReview;
+  const newReview = await reviewService.create({
+    ...ctx.request.body,
+    date: new Date(ctx.request.body.date),
+  });
+  ctx.body = newReview;
+  ctx.status=201;
 };
 
 const getReviewById = async (ctx) => {
-	ctx.body = await reviewService.getById(ctx.params.id);
+  ctx.body = await reviewService.getById(ctx.params.id);
 };
 
 const updateReview = async (ctx) => {
-	ctx.body = await reviewService.updateById(ctx.params.id, {
-		...ctx.request.body,
-		date: new Date(ctx.request.body.date),
-	});
+  ctx.body = await reviewService.updateById(ctx.params.id, {
+    ...ctx.request.body,
+    date: new Date(ctx.request.body.date),
+  });
 };
 
 const deleteReview = async (ctx) => {
-	await reviewService.deleteById(ctx.params.id);
-	ctx.status = 204;
+  await reviewService.deleteById(ctx.params.id);
+  ctx.status = 204;
 };
 
 /**
@@ -35,15 +38,15 @@ const deleteReview = async (ctx) => {
  * @param {Router} app - The parent router.
  */
 module.exports = (app) => {
-	const router = new Router({
-		prefix: '/reviews',
-	});
+  const router = new Router({
+    prefix: "/reviews",
+  });
 
-	router.get('/', getAllReviews);
-	router.post('/', createReview);
-	router.get('/:id', getReviewById);
-	router.put('/:id', updateReview);
-	router.delete('/:id', deleteReview);
+  router.get("/", getAllReviews);
+  router.post("/", createReview);
+  router.get("/:id", getReviewById);
+  router.put("/:id", updateReview);
+  router.delete("/:id", deleteReview);
 
-	app.use(router.routes()).use(router.allowedMethods());
+  app.use(router.routes()).use(router.allowedMethods());
 };

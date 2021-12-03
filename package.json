@@ -1,10 +1,19 @@
 {
-  "name": "webservices-beer",
+  "name": "webservices-beer-review",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "npx env-cmd nodemon src/index.js"
+    "start": "npx env-cmd nodemon src/index.js",
+    "test": "npx env-cmd -f .env.test jest",
+    "test:coverage": "yarn test --coverage"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "src",
+      "node_modules",
+      "config"
+    ]
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
@@ -19,6 +28,8 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "jest": "^27.4.3",
+    "nodemon": "^2.0.12",
+    "supertest": "^6.1.6"
   }
 }
