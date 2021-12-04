@@ -1,5 +1,5 @@
 
-const winston = require('winston');
+const winston = require("winston");
 const {
   combine, timestamp, colorize, printf, json,
 } = winston.format;
@@ -8,7 +8,7 @@ let logger;
 
 const devFormat = () => {
   const formatMessage = ({
-    level, message, timestamp, name = 'server', ...rest
+    level, message, timestamp, name = "server", ...rest
   }) => `${timestamp} | ${name} | ${level} | ${message} | ${JSON.stringify(rest)}`;
 
   const formatError = ({
@@ -31,7 +31,7 @@ const prodFormat = () => {
  * Get the root logger.
  */
 const getLogger = () => {
-  if (!logger) throw new Error('You must first initialize the logger');
+  if (!logger) throw new Error("You must first initialize the logger");
   return logger;
 };
 
@@ -59,7 +59,7 @@ const getChildLogger = (name, meta = {}) => {
  * @param {object} options.defaultMeta - Default metadata to show.
  * @param {winston.transport[]} options.extraTransports - Extra transports to add besides console.
  */
- const initializeLogger = ({
+const initializeLogger = ({
   level,
   disabled,
   isProduction,
@@ -75,7 +75,7 @@ const getChildLogger = (name, meta = {}) => {
         silent: disabled,
       }),
       ...extraTransports,
-    ]
+    ],
   });
 
   logger.info(` Logger initialized with minimum log level ${level}`);

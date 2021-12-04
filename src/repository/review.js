@@ -1,4 +1,5 @@
 const uuid = require("uuid");
+
 const { tables, getKnex } = require("../data/index");
 const { getChildLogger } = require("../core/logging");
 
@@ -116,7 +117,7 @@ const create = async ({ rating, description, date, beerId, userId }) => {
  */
 const updateById = async (
   id,
-  { rating, description, date, beerId, userId }
+  { rating, description, date, beerId, userId },
 ) => {
   try {
     await getKnex()(tables.review)

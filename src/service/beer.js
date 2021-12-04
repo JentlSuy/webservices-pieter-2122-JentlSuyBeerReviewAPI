@@ -1,6 +1,8 @@
 const config = require("config");
+
 const { getChildLogger } = require("../core/logging");
 const beerRepository = require("../repository/beer");
+
 const breweryService = require("./brewery");
 
 const DEFAULT_PAGINATION_LIMIT = config.get("pagination.limit");
@@ -59,7 +61,7 @@ const create = async ({ name, percentage, brewery_id }) => {
 
   let doUpdate = true;
   try {
-    const breweryError = await breweryService.getById(brewery_id);
+    await breweryService.getById(brewery_id);
   } catch {
     debugLog(`No brewery found with id ${brewery_id}`);
     doUpdate = false;
@@ -68,7 +70,7 @@ const create = async ({ name, percentage, brewery_id }) => {
   }
 
   if (checkPercentageError(percentage)) {
-    message =
+    var message =
       "The alcohol percentage can not be larger then 100 % or smaller then 0 %.";
     debugLog(message);
     doUpdate = false;
@@ -95,7 +97,7 @@ const updateById = async (id, { name, percentage, brewery_id }) => {
 
   let doUpdate = true;
   try {
-    const breweryError = await breweryService.getById(brewery_id);
+    await breweryService.getById(brewery_id);
   } catch {
     debugLog(`No brewery found with id ${brewery_id}`);
     doUpdate = false;
@@ -104,7 +106,7 @@ const updateById = async (id, { name, percentage, brewery_id }) => {
   }
 
   if (checkPercentageError(percentage)) {
-    message =
+    var message =
       "The alcohol percentage can not be larger then 100 % or smaller then 0 %.";
     debugLog(message);
     doUpdate = false;

@@ -1,6 +1,8 @@
 const config = require("config");
+
 const { getChildLogger } = require("../core/logging");
 const reviewRepository = require("../repository/review");
+
 const userService = require("./user");
 const beerService = require("./beer");
 
@@ -60,11 +62,17 @@ const getById = async (id) => {
  * @param {string} review.user - Name of the user who did the review.
  */
 const create = async ({ rating, description, date, beerId, userId }) => {
-  debugLog("Creating new review", { rating, description, date, beerId, userId });
+  debugLog("Creating new review", {
+    rating,
+    description,
+    date,
+    beerId,
+    userId,
+  });
 
   let doUpdate = true;
   try {
-    const beerError = await beerService.getById(beerId);
+    await beerService.getById(beerId);
   } catch {
     debugLog(`No beer found with id ${beerId}`);
     doUpdate = false;
@@ -72,7 +80,7 @@ const create = async ({ rating, description, date, beerId, userId }) => {
     //TODO ERROR STATUS CODE!!!
   }
   try {
-    const userError = await userService.getById(userId);
+    await userService.getById(userId);
   } catch {
     debugLog(`No user found with id ${userId}`);
     doUpdate = false;
@@ -115,7 +123,7 @@ const updateById = async (
 
   let doUpdate = true;
   try {
-    const beerError = await beerService.getById(beerId);
+    await beerService.getById(beerId);
   } catch {
     debugLog(`No beer found with id ${beerId}`);
     doUpdate = false;
@@ -123,7 +131,7 @@ const updateById = async (
     //TODO ERROR STATUS CODE!!!
   }
   try {
-    const userError = await userService.getById(userId);
+    await userService.getById(userId);
   } catch {
     debugLog(`No user found with id ${userId}`);
     doUpdate = false;

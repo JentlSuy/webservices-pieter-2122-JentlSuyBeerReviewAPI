@@ -1,4 +1,5 @@
 const config = require("config");
+
 const { getChildLogger } = require("../core/logging");
 const beerRepository = require("../repository/brewery");
 
@@ -18,7 +19,7 @@ const debugLog = (message, meta = {}) => {
  */
 const getAll = async (
   limit = DEFAULT_PAGINATION_LIMIT,
-  offset = DEFAULT_PAGINATION_OFFSET
+  offset = DEFAULT_PAGINATION_OFFSET,
 ) => {
   debugLog("Fetching all breweries", { limit, offset });
   const data = await beerRepository.findAll({ limit, offset });

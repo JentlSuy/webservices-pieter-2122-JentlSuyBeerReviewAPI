@@ -1,4 +1,5 @@
 const supertest = require("supertest");
+
 const createServer = require("../../src/createServer");
 const { getKnex, tables } = require("../../src/data");
 
@@ -120,7 +121,7 @@ describe("Beers", () => {
       expect(response.body.name).toBe("La Chouffe");
       expect(response.body.percentage).toBe(8);
       expect(response.body.brewery_id).toBe(
-        "7f28c5f9-d711-4cd6-ac15-d13d71abbr09"
+        "7f28c5f9-d711-4cd6-ac15-d13d71abbr09",
       );
 
       beersToDelete.push(response.body.id);

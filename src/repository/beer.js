@@ -1,4 +1,5 @@
-const uuid = require('uuid');
+const uuid = require("uuid");
+
 const { tables, getKnex } = require("../data/index");
 const { getChildLogger } = require("../core/logging");
 

@@ -1,6 +1,7 @@
+const { join } = require("path");
+
 const config = require("config");
 const knex = require("knex");
-const { join } = require("path");
 
 const { getChildLogger } = require("../core/logging");
 
@@ -23,8 +24,8 @@ const getKnexLogger = (logger, level) => (message) => {
     message.forEach((innerMessage) =>
       logger.log(
         level,
-        innerMessage.sql ? innerMessage.sql : JSON.stringify(innerMessage)
-      )
+        innerMessage.sql ? innerMessage.sql : JSON.stringify(innerMessage),
+      ),
     );
   } else {
     logger.log(level, JSON.stringify(message));
@@ -137,7 +138,7 @@ async function shutdownData() {
 function getKnex() {
   if (!knexInstance)
     throw new Error(
-      "Please initialize the data layer before getting the Knex instance"
+      "Please initialize the data layer before getting the Knex instance",
     );
   return knexInstance;
 }

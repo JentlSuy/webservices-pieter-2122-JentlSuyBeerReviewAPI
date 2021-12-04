@@ -1,6 +1,7 @@
+const supertest = require("supertest");
+
 const createServer = require("../../src/createServer");
 const { getKnex, tables } = require("../../src/data");
-const supertest = require("supertest");
 
 const data = {
   reviews: [
@@ -302,7 +303,7 @@ describe("Reviews", () => {
 
     it("it should 204 and return nothing", async () => {
       const response = await request.delete(
-        `${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`
+        `${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`,
       );
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});

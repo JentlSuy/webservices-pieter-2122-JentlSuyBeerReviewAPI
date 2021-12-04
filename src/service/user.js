@@ -1,9 +1,9 @@
-const { getChildLogger } = require('../core/logging');
-const userRepository = require('../repository/user');
+const { getChildLogger } = require("../core/logging");
+const userRepository = require("../repository/user");
 
 const debugLog = (message, meta = {}) => {
-	if (!this.logger) this.logger = getChildLogger('user-service');
-	this.logger.debug(message, meta);
+  if (!this.logger) this.logger = getChildLogger("user-service");
+  this.logger.debug(message, meta);
 };
 
 /**
@@ -11,16 +11,15 @@ const debugLog = (message, meta = {}) => {
  *
  * @param {object} user - The user's data.
  * @param {string} user.name - The user's name.
+ * @param {string} user.email - The user's email.
  */
-const register = ({
-  name,
-}) => {
-  debugLog('Creating a new user', { name });
+const register = ({ name, email }) => {
+  debugLog("Creating a new user", { name, email });
   return userRepository.create({
     name,
+    email,
   });
 };
-
 
 /**
  * Get all `limit` users, skip the first `offset`.
@@ -28,11 +27,8 @@ const register = ({
  * @param {number} [limit] - Nr of users to fetch.
  * @param {number} [offset] - Nr of users to skip.
  */
- const getAll = async (
-  limit = 100,
-  offset = 0,
-) => {
-  debugLog('Fetching all users', { limit, offset });
+const getAll = async (limit = 100, offset = 0) => {
+  debugLog("Fetching all users", { limit, offset });
   const data = await userRepository.findAll({ limit, offset });
   const totalCount = await userRepository.findCount();
   return {
@@ -62,7 +58,6 @@ const getById = async (id) => {
   return user;
 };
 
-
 /**
  * Update an existing user.
  *
@@ -79,7 +74,6 @@ const updateById = (id, { name, email }) => {
   debugLog(`Updating user with id ${id}`, { name, email });
   return userRepository.updateById(id, { name, email });
 };
-
 
 /**
  * Delete an existing user.

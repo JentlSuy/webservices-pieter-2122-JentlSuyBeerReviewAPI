@@ -2,9 +2,13 @@ const Koa = require("koa");
 const config = require("config");
 const koaCors = require("@koa/cors");
 const bodyParser = require("koa-bodyparser");
+const swaggerJsdoc = require("swagger-jsdoc");
+const { koaSwagger } = require("koa2-swagger-ui");
+
 const { initializeLogger, getLogger } = require("./core/logging");
 const { initializeData, shutdownData } = require("./data");
 const installRest = require("./rest");
+const swaggerOptions = require("./swagger.config");
 
 const PORT = config.get("port");
 const HOST = config.get("host");
@@ -42,12 +46,26 @@ module.exports = async function createServer() {
       },
       allowHeaders: ["Accept", "Content-Type", "Authorization"],
       maxAge: CORS_MAX_AGE,
-    })
+    }),
   );
 
   const logger = getLogger();
 
   app.use(bodyParser());
+
+  // Initializing SwaggerUI
+  const spec = swaggerJsdoc(swaggerOptions);
+  app.use(
+    koaSwagger({
+      routePrefix: "/swagger", // host at /swagger instead of default /docs
+      specPrefix: "/swagger/spec", // route where the spec is returned
+      exposeSpec: true, // expose spec file
+      swaggerOptions: {
+        // passed to SwaggerUi()
+        spec,
+      },
+    }),
+  );
 
   installRest(app);
 

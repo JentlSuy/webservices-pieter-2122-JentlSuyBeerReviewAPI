@@ -13,7 +13,7 @@ module.exports = {
     port: 3306,
     name: "beerreview_test",
     username: "root",
-    password: "root"
+    password: "root",
   },
   pagination: {
     limit: 100,
