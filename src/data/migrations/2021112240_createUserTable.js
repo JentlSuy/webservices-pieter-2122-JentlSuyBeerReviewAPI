@@ -6,8 +6,6 @@ module.exports = {
       table.uuid("id").primary();
 
       table.string("name", 255).notNullable();
-
-      table.string("email", 255).notNullable();
     });
   },
   down: (knex) => {

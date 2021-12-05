@@ -36,17 +36,32 @@ const findById = (id) => {
 };
 
 /**
+ * Find a user with the given email.
+ *
+ * @param {string} email - The email to search for.
+ */
+const findByEmail = (email) => {
+  return getKnex()(tables.user).where("email", email).first();
+};
+
+/**
  * Create a new user with the given `name`.
  *
  * @param {object} user - User to create.
  * @param {string} user.name - Name of the user.
+ * @param {string} user.email - Email of the user.
+ * @param {string} user.passwordHash - Hashed password of the user.
+ * @param {string[]} user.roles - Roles of the user.
  */
-const create = async ({ name }) => {
+const create = async ({ name, email, passwordHash, roles }) => {
   try {
     const id = uuid.v4();
     await getKnex()(tables.user).insert({
       id,
       name,
+      email,
+      password_hash: passwordHash,
+      roles: JSON.stringify(roles),
     });
     return await findById(id);
   } catch (error) {
@@ -64,14 +79,12 @@ const create = async ({ name }) => {
  * @param {string} id - Id of the user to update.
  * @param {object} user - User to save.
  * @param {string} user.name - Name of the user.
- * @param {string} user.email - Email of the user.
  */
-const updateById = async (id, { name, email }) => {
+const updateById = async (id, { name }) => {
   try {
     await getKnex()(tables.user)
       .update({
         name,
-        email,
       })
       .where("id", id);
     return await findById(id);
@@ -85,7 +98,7 @@ const updateById = async (id, { name, email }) => {
 };
 
 /**
- * Update a user with the given `id`.
+ * Remove a user with the given `id`.
  *
  * @param {string} id - Id of the user to delete.
  */
@@ -106,6 +119,7 @@ module.exports = {
   findAll,
   findCount,
   findById,
+  findByEmail,
   create,
   updateById,
   deleteById,

@@ -1,6 +1,10 @@
+const Joi = require("joi");
 const Router = require("@koa/router");
 
 const beerService = require("../service/beer");
+const { requireAuthentication } = require("../core/auth");
+
+const validate = require("./_validation.js");
 
 /**
  * @swagger
@@ -112,6 +116,12 @@ const getAllBeers = async (ctx) => {
   const offset = ctx.query.offset && Number(ctx.query.offset);
   ctx.body = await beerService.getAll(limit, offset);
 };
+getAllBeers.validationScheme = {
+  query: Joi.object({
+    limit: Joi.number().integer().positive().max(1000).optional(),
+    offset: Joi.number().integer().min(0).optional(),
+  }).and("limit", "offset"),
+};
 
 /**
  * @swagger
@@ -140,6 +150,13 @@ const createBeer = async (ctx) => {
   const newBeer = await beerService.create(ctx.request.body);
   ctx.body = newBeer;
 };
+createBeer.validationScheme = {
+  body: {
+    name: Joi.string().max(255),
+    brewery_id: Joi.string().uuid(),
+    percentage: Joi.number().min(0).max(100),
+  },
+};
 
 /**
  * @swagger
@@ -164,6 +181,11 @@ const createBeer = async (ctx) => {
  */
 const getBeerById = async (ctx) => {
   ctx.body = await beerService.getById(ctx.params.id);
+};
+getBeerById.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
 };
 
 /**
@@ -193,6 +215,16 @@ const getBeerById = async (ctx) => {
 const updateBeer = async (ctx) => {
   ctx.body = await beerService.updateById(ctx.params.id, ctx.request.body);
 };
+updateBeer.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+  body: {
+    name: Joi.string().max(255),
+    brewery_id: Joi.string().uuid(),
+    percentage: Joi.number().min(0).max(100),
+  },
+};
 
 /**
  * @swagger
@@ -215,6 +247,11 @@ const deleteBeer = async (ctx) => {
   await beerService.deleteById(ctx.params.id);
   ctx.status = 204;
 };
+deleteBeer.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+};
 
 /**
  * Install transaction routes in the given router.
@@ -226,11 +263,36 @@ module.exports = (app) => {
     prefix: "/beers",
   });
 
-  router.get("/", getAllBeers);
-  router.post("/", createBeer);
-  router.get("/:id", getBeerById);
-  router.put("/:id", updateBeer);
-  router.delete("/:id", deleteBeer);
+  router.get(
+    "/",
+    requireAuthentication,
+    validate(getAllBeers.validationScheme),
+    getAllBeers
+  );
+  router.post(
+    "/",
+    requireAuthentication,
+    validate(createBeer.validationScheme),
+    createBeer
+  );
+  router.get(
+    "/:id",
+    requireAuthentication,
+    validate(getBeerById.validationScheme),
+    getBeerById
+  );
+  router.put(
+    "/:id",
+    requireAuthentication,
+    validate(updateBeer.validationScheme),
+    updateBeer
+  );
+  router.delete(
+    "/:id",
+    requireAuthentication,
+    validate(deleteBeer.validationScheme),
+    deleteBeer
+  );
 
   app.use(router.routes()).use(router.allowedMethods());
 };

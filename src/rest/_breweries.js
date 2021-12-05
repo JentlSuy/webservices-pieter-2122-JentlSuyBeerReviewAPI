@@ -1,6 +1,10 @@
 const Router = require("@koa/router");
+const Joi = require("joi");
 
 const breweryService = require("../service/brewery");
+const { requireAuthentication } = require("../core/auth");
+
+const validate = require("./_validation.js");
 
 /**
  * @swagger
@@ -105,6 +109,12 @@ const getAllBreweries = async (ctx) => {
   const offset = ctx.query.offset && Number(ctx.query.offset);
   ctx.body = await breweryService.getAll(limit, offset);
 };
+getAllBreweries.validationScheme = {
+  query: Joi.object({
+    limit: Joi.number().integer().positive().max(1000).optional(),
+    offset: Joi.number().integer().min(0).optional(),
+  }).and("limit", "offset"),
+};
 
 /**
  * @swagger
@@ -128,6 +138,12 @@ const createBrewery = async (ctx) => {
   const newBeer = await breweryService.create(ctx.request.body);
   ctx.body = newBeer;
   ctx.status = 201;
+};
+createBrewery.validationScheme = {
+  body: {
+    name: Joi.string().max(255),
+    country: Joi.string().max(50),
+  },
 };
 
 /**
@@ -153,6 +169,11 @@ const createBrewery = async (ctx) => {
  */
 const getBreweryById = async (ctx) => {
   ctx.body = await breweryService.getById(ctx.params.id);
+};
+getBreweryById.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
 };
 
 /**
@@ -182,6 +203,15 @@ const getBreweryById = async (ctx) => {
 const updateBrewery = async (ctx) => {
   ctx.body = await breweryService.updateById(ctx.params.id, ctx.request.body);
 };
+updateBrewery.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+  body: {
+    name: Joi.string().max(255),
+    country: Joi.string().max(50),
+  },
+};
 
 /**
  * @swagger
@@ -204,6 +234,11 @@ const deleteBrewery = async (ctx) => {
   await breweryService.deleteById(ctx.params.id);
   ctx.status = 204;
 };
+deleteBrewery.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+};
 
 /**
  * Install transaction routes in the given router.
@@ -215,11 +250,36 @@ module.exports = (app) => {
     prefix: "/breweries",
   });
 
-  router.get("/", getAllBreweries);
-  router.post("/", createBrewery);
-  router.get("/:id", getBreweryById);
-  router.put("/:id", updateBrewery);
-  router.delete("/:id", deleteBrewery);
+  router.get(
+    "/",
+    requireAuthentication,
+    validate(getAllBreweries.validationScheme),
+    getAllBreweries
+  );
+  router.post(
+    "/",
+    requireAuthentication,
+    validate(createBrewery.validationScheme),
+    createBrewery
+  );
+  router.get(
+    "/:id",
+    requireAuthentication,
+    validate(getBreweryById.validationScheme),
+    getBreweryById
+  );
+  router.put(
+    "/:id",
+    requireAuthentication,
+    validate(updateBrewery.validationScheme),
+    updateBrewery
+  );
+  router.delete(
+    "/:id",
+    requireAuthentication,
+    validate(deleteBrewery.validationScheme),
+    deleteBrewery
+  );
 
   app.use(router.routes()).use(router.allowedMethods());
 };

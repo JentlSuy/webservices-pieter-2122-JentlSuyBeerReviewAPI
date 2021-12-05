@@ -1,6 +1,10 @@
 const Router = require("@koa/router");
+const Joi = require("joi");
 
 const reviewService = require("../service/review");
+const { requireAuthentication } = require("../core/auth");
+
+const validate = require("./_validation.js");
 
 /**
  * @swagger
@@ -129,6 +133,12 @@ const getAllReviews = async (ctx) => {
   const offset = ctx.query.offset && Number(ctx.query.offset);
   ctx.body = await reviewService.getAll(limit, offset);
 };
+getAllReviews.validationScheme = {
+  query: Joi.object({
+    limit: Joi.number().integer().positive().max(1000).optional(),
+    offset: Joi.number().integer().min(0).optional(),
+  }).and("limit", "offset"),
+};
 
 /**
  * @swagger
@@ -156,6 +166,14 @@ const createReview = async (ctx) => {
   ctx.body = newReview;
   ctx.status = 201;
 };
+createReview.validationScheme = {
+  body: {
+    rating: Joi.number().min(0).max(5),
+    description: Joi.string().max(500),
+    date: Joi.date().iso().less("now"),
+    beerId: Joi.string().uuid(),
+  },
+};
 
 /**
  * @swagger
@@ -180,6 +198,11 @@ const createReview = async (ctx) => {
  */
 const getReviewById = async (ctx) => {
   ctx.body = await reviewService.getById(ctx.params.id);
+};
+getReviewById.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
 };
 
 /**
@@ -212,6 +235,17 @@ const updateReview = async (ctx) => {
     date: new Date(ctx.request.body.date),
   });
 };
+updateReview.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+  body: {
+    rating: Joi.number().min(0).max(5),
+    description: Joi.string().max(500),
+    date: Joi.date().iso().less("now"),
+    beerId: Joi.string().uuid(),
+  },
+};
 
 /**
  * @swagger
@@ -234,6 +268,11 @@ const deleteReview = async (ctx) => {
   await reviewService.deleteById(ctx.params.id);
   ctx.status = 204;
 };
+deleteReview.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+};
 
 /**
  * Install review routes in the given router.
@@ -245,11 +284,11 @@ module.exports = (app) => {
     prefix: "/reviews",
   });
 
-  router.get("/", getAllReviews);
-  router.post("/", createReview);
-  router.get("/:id", getReviewById);
-  router.put("/:id", updateReview);
-  router.delete("/:id", deleteReview);
+  router.get('/', requireAuthentication, validate(getAllReviews.validationScheme), getAllReviews);
+  router.post('/', requireAuthentication, validate(createReview.validationScheme), createReview);
+  router.get('/:id', requireAuthentication, validate(getReviewById.validationScheme), getReviewById);
+  router.put('/:id', requireAuthentication, validate(updateReview.validationScheme), updateReview);
+  router.delete('/:id', requireAuthentication, validate(deleteReview.validationScheme), deleteReview);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

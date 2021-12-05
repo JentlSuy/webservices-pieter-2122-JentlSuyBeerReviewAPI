@@ -1,29 +1,35 @@
-
 const winston = require("winston");
-const {
-  combine, timestamp, colorize, printf, json,
-} = winston.format;
+const { combine, timestamp, colorize, printf, json } = winston.format;
 
 let logger;
 
 const devFormat = () => {
   const formatMessage = ({
-    level, message, timestamp, name = "server", ...rest
-  }) => `${timestamp} | ${name} | ${level} | ${message} | ${JSON.stringify(rest)}`;
+    level,
+    message,
+    timestamp,
+    name = "server",
+    ...rest
+  }) =>
+    `${timestamp} | ${name} | ${level} | ${message} | ${JSON.stringify(rest)}`;
 
-  const formatError = ({
-    error: { stack }, ...rest
-  }) => `${formatMessage(rest)}\n\n${stack}\n`;
-  const format = (info) => info.error instanceof Error ? formatError(info) : formatMessage(info);
-  return combine(
-    colorize(), timestamp(), printf(format),
-  );
+  const formatError = ({ error: { stack }, ...rest }) =>
+    `${formatMessage(rest)}\n\n${stack}\n`;
+  const format = (info) =>
+    info.error instanceof Error ? formatError(info) : formatMessage(info);
+  return combine(colorize(), timestamp(), printf(format));
 };
 
 const prodFormat = () => {
   // Error have no proper toJSON, so create a new plain object
-  const replaceError = ({ label, level, message, stack }) => ({ label, level, message, stack });
-  const replacer = (_, value) => value instanceof Error ? replaceError(value) : value;
+  const replaceError = ({ label, level, message, stack }) => ({
+    label,
+    level,
+    message,
+    stack,
+  });
+  const replacer = (_, value) =>
+    value instanceof Error ? replaceError(value) : value;
   return json({ replacer });
 };
 

@@ -16,6 +16,14 @@ module.exports = {
         email: "jentl.suy@student.hogent.be",
       },
     },
+    securityDefinitions: {
+      bearerAuth: {
+        security: [{ bearerAuth: [] }],
+        type: "apiKey",
+        scheme: "bearer",
+        in: "header",
+      },
+    },
     servers: [
       {
         url: "http://localhost:9000/",

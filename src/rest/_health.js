@@ -2,6 +2,8 @@ const Router = require("@koa/router");
 
 const healthService = require("../service/health");
 
+const validate = require("./_validation");
+
 /**
  * @swagger
  * tags:
@@ -82,6 +84,7 @@ const healthService = require("../service/health");
 const ping = async (ctx) => {
   ctx.body = healthService.ping();
 };
+ping.validationScheme = null;
 
 /**
  * @swagger
@@ -101,6 +104,7 @@ const ping = async (ctx) => {
 const getVersion = async (ctx) => {
   ctx.body = healthService.getVersion();
 };
+getVersion.validationScheme = null;
 
 /**
  * Install health routes in the given router.
@@ -112,8 +116,8 @@ module.exports = function installPlacesRoutes(app) {
     prefix: "/health",
   });
 
-  router.get("/ping", ping);
-  router.get("/version", getVersion);
+  router.get("/ping", validate(ping.validationScheme), ping);
+  router.get("/version", validate(getVersion.validationScheme), getVersion);
 
   app.use(router.routes()).use(router.allowedMethods());
 };
