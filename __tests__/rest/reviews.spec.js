@@ -1,7 +1,5 @@
-const supertest = require("supertest");
-
-const createServer = require("../../src/createServer");
-const { getKnex, tables } = require("../../src/data");
+const { tables } = require("../../src/data");
+const { withServer, login } = require("../supertest.setup");
 
 const data = {
   reviews: [
@@ -65,17 +63,17 @@ const dataToDelete = {
 };
 
 describe("Reviews", () => {
-  let server; // de server
+  let loginHeader;
   let request; // waarmee we HTTP requests gaan doen
   let knex; // de huidige Knex instantie
-  beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
-    knex = getKnex();
+
+  withServer(({ knex: k, supertest: s }) => {
+    knex = k;
+    request = s;
   });
 
-  afterAll(async () => {
-    await server.stop();
+  beforeAll(async () => {
+    loginHeader = await login(request);
   });
 
   const url = "/api/reviews";
@@ -84,7 +82,6 @@ describe("Reviews", () => {
     beforeAll(async () => {
       await knex(tables.brewery).insert(data.breweries);
       await knex(tables.beer).insert(data.beers);
-      await knex(tables.user).insert(data.users);
       await knex(tables.review).insert(data.reviews);
     });
 
@@ -92,11 +89,10 @@ describe("Reviews", () => {
       await knex(tables.review).whereIn("id", dataToDelete.reviews).delete();
       await knex(tables.beer).whereIn("id", dataToDelete.beers).delete();
       await knex(tables.brewery).whereIn("id", dataToDelete.breweries).delete();
-      await knex(tables.user).whereIn("id", dataToDelete.users).delete();
     });
 
     it("should 200 and return all reviews", async () => {
-      const response = await request.get(url);
+      const response = await request.get(url).set("Authorization", loginHeader);
       expect(response.status).toBe(200);
       expect(response.body.limit).toBe(100);
       expect(response.body.offset).toBe(0);
@@ -105,7 +101,9 @@ describe("Reviews", () => {
     });
 
     it("it should 200 and paginate the list of reviews", async () => {
-      const response = await request.get(`${url}?limit=2&offset=1`);
+      const response = await request
+        .get(`${url}?limit=2&offset=1`)
+        .set("Authorization", loginHeader);
       expect(response.status).toBe(200);
       // expect(response.body.data.length).toBe(2);
       expect(response.body.limit).toBe(2);
@@ -145,7 +143,6 @@ describe("Reviews", () => {
     beforeAll(async () => {
       await knex(tables.brewery).insert(data.breweries);
       await knex(tables.beer).insert(data.beers);
-      await knex(tables.user).insert(data.users);
       await knex(tables.review).insert(data.reviews[0]);
     });
 
@@ -153,12 +150,13 @@ describe("Reviews", () => {
       await knex(tables.review).where("id", dataToDelete.reviews[0]).delete();
       await knex(tables.beer).whereIn("id", dataToDelete.beers).delete();
       await knex(tables.brewery).whereIn("id", dataToDelete.breweries).delete();
-      await knex(tables.user).whereIn("id", dataToDelete.users).delete();
     });
 
     it("it should 200 and return the requested review", async () => {
       const reviewId = data.reviews[0].id;
-      const response = await request.get(`${url}/${reviewId}`);
+      const response = await request
+        .get(`${url}/${reviewId}`)
+        .set("Authorization", loginHeader);
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
@@ -180,29 +178,29 @@ describe("Reviews", () => {
 
   describe("POST /api/reviews", () => {
     const reviewsToDelete = [];
-    const usersToDelete = [];
 
     beforeAll(async () => {
       await knex(tables.brewery).insert(data.breweries);
       await knex(tables.beer).insert(data.beers);
-      await knex(tables.user).insert(data.users);
     });
 
     afterAll(async () => {
       await knex(tables.review).whereIn("id", reviewsToDelete).delete();
       await knex(tables.beer).whereIn("id", dataToDelete.beers).delete();
       await knex(tables.brewery).whereIn("id", dataToDelete.breweries).delete();
-      await knex(tables.user).whereIn("id", usersToDelete).delete();
     });
 
     it("it should 201 and return the created review", async () => {
-      const response = await request.post(url).send({
-        rating: 5,
-        description: "Geen fan van Maes.",
-        date: "2021-05-27T13:00:00.000Z",
-        beerId: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
-        userId: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
-      });
+      const response = await request
+        .post(url)
+        .set("Authorization", loginHeader)
+        .send({
+          rating: 5,
+          description: "Geen fan van Maes.",
+          date: "2021-05-27T13:00:00.000Z",
+          beerId: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
+          userId: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+        });
 
       expect(response.status).toBe(201);
       expect(response.body.id).toBeTruthy();
@@ -217,17 +215,13 @@ describe("Reviews", () => {
       expect(response.body.user.name).toBe("Test User");
 
       reviewsToDelete.push(response.body.id);
-      usersToDelete.push(response.body.user.id);
     });
   });
 
   describe("PUT /api/reviews/:id", () => {
-    const usersToDelete = [];
-
     beforeAll(async () => {
       await knex(tables.brewery).insert(data.breweries);
       await knex(tables.beer).insert(data.beers);
-      await knex(tables.user).insert(data.users);
       await knex(tables.review).insert([
         {
           id: "7f28c5f9-d711-4cd6-ac15-d13d71abff89",
@@ -246,14 +240,12 @@ describe("Reviews", () => {
         .delete();
       await knex(tables.beer).whereIn("id", dataToDelete.beers).delete();
       await knex(tables.brewery).whereIn("id", dataToDelete.breweries).delete();
-      await knex(tables.user)
-        .whereIn("id", [...dataToDelete.users, ...usersToDelete])
-        .delete();
     });
 
     it("it should 200 and return the updated transaction", async () => {
       const response = await request
         .put(`${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`)
+        .set("Authorization", loginHeader)
         .send({
           rating: 0,
           description: "Geen fan van Maes.",
@@ -272,8 +264,6 @@ describe("Reviews", () => {
         name: "Maes",
       });
       expect(response.body.user.name).toEqual("Test User");
-
-      usersToDelete.push(response.body.user.id);
     });
   });
 
@@ -281,8 +271,6 @@ describe("Reviews", () => {
     beforeAll(async () => {
       await knex(tables.brewery).insert(data.breweries);
       await knex(tables.beer).insert(data.beers);
-      await knex(tables.user).insert(data.users);
-
       await knex(tables.review).insert([
         {
           id: "7f28c5f9-d711-4cd6-ac15-d13d71abff89",
@@ -298,13 +286,12 @@ describe("Reviews", () => {
     afterAll(async () => {
       await knex(tables.beer).whereIn("id", dataToDelete.beers).delete();
       await knex(tables.brewery).whereIn("id", dataToDelete.breweries).delete();
-      await knex(tables.user).whereIn("id", dataToDelete.users).delete();
     });
 
     it("it should 204 and return nothing", async () => {
-      const response = await request.delete(
-        `${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`,
-      );
+      const response = await request
+        .delete(`${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`)
+        .set("Authorization", loginHeader);
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
     });

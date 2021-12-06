@@ -9,13 +9,6 @@
     "test:coverage": "yarn test --coverage",
     "lint": "npx eslint . --fix"
   },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "src",
-      "node_modules",
-      "config"
-    ]
-  },
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@koa/router": "^10.1.1",

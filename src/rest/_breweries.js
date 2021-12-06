@@ -172,7 +172,7 @@ const getBreweryById = async (ctx) => {
 };
 getBreweryById.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
 };
 
@@ -205,7 +205,7 @@ const updateBrewery = async (ctx) => {
 };
 updateBrewery.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
   body: {
     name: Joi.string().max(255),
@@ -236,7 +236,7 @@ const deleteBrewery = async (ctx) => {
 };
 deleteBrewery.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
 };
 

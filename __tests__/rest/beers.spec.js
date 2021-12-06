@@ -1,7 +1,5 @@
-const supertest = require("supertest");
-
-const createServer = require("../../src/createServer");
-const { getKnex, tables } = require("../../src/data");
+const { tables } = require("../../src/data");
+const { withServer, login } = require("../supertest.setup");
 
 const data = {
   breweries: [
@@ -43,19 +41,22 @@ const dataToDelete = {
 };
 
 describe("Beers", () => {
-  let server;
   let request;
   let knex;
+  let loginHeader;
+
+  withServer(({ knex: k, supertest: s }) => {
+    knex = k;
+    request = s;
+  });
 
   beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
-    knex = getKnex();
+    loginHeader = await login(request);
   });
 
-  afterAll(async () => {
-    await server.stop();
-  });
+  // afterAll(async () => {
+  //   await server.stop();
+  // });
 
   const url = "/api/beers";
 
@@ -71,7 +72,7 @@ describe("Beers", () => {
     });
 
     it("it should 200 and return all beers", async () => {
-      const response = await request.get(url);
+      const response = await request.get(url).set("Authorization", loginHeader);
 
       expect(response.status).toBe(200);
       expect(response.body.count).toBeGreaterThanOrEqual(3);
@@ -91,7 +92,9 @@ describe("Beers", () => {
     });
 
     it("it should 200 and return the requested beer", async () => {
-      const response = await request.get(`${url}/${data.beers[0].id}`);
+      const response = await request
+        .get(`${url}/${data.beers[0].id}`)
+        .set("Authorization", loginHeader);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(data.beers[0]);
     });
@@ -110,18 +113,21 @@ describe("Beers", () => {
     });
 
     it("it should 201 and return the created beer", async () => {
-      const response = await request.post(url).send({
-        name: "La Chouffe",
-        percentage: 8,
-        brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr09",
-      });
+      const response = await request
+        .post(url)
+        .set("Authorization", loginHeader)
+        .send({
+          name: "La Chouffe",
+          percentage: 8,
+          brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr09",
+        });
 
       expect(response.status).toBe(201);
       expect(response.body.id).toBeTruthy();
       expect(response.body.name).toBe("La Chouffe");
       expect(response.body.percentage).toBe(8);
       expect(response.body.brewery_id).toBe(
-        "7f28c5f9-d711-4cd6-ac15-d13d71abbr09",
+        "7f28c5f9-d711-4cd6-ac15-d13d71abbr09"
       );
 
       beersToDelete.push(response.body.id);
@@ -154,11 +160,14 @@ describe("Beers", () => {
     });
 
     it("it should 200 and return the updated beer", async () => {
-      const response = await request.put(`${url}/${data.beers[0].id}`).send({
-        name: "Maredsous Blond",
-        percentage: 6,
-        brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr09",
-      });
+      const response = await request
+        .put(`${url}/${data.beers[0].id}`)
+        .set("Authorization", loginHeader)
+        .send({
+          name: "Maredsous Blond",
+          percentage: 6,
+          brewery_id: "7f28c5f9-d711-4cd6-ac15-d13d71abbr09",
+        });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
@@ -181,7 +190,9 @@ describe("Beers", () => {
     });
 
     it("it should 204 and return nothing", async () => {
-      const response = await request.delete(`${url}/${data.beers[0].id}`);
+      const response = await request
+        .delete(`${url}/${data.beers[0].id}`)
+        .set("Authorization", loginHeader);
 
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});

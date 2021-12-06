@@ -1,6 +1,6 @@
 module.exports = {
   definition: {
-    openapi: "3.0.0",
+    openapi: "3.0.1",
     info: {
       title: "BeerReview API with Swagger",
       version: "0.1.0",
@@ -16,17 +16,23 @@ module.exports = {
         email: "jentl.suy@student.hogent.be",
       },
     },
-    securityDefinitions: {
-      bearerAuth: {
-        security: [{ bearerAuth: [] }],
-        type: "apiKey",
-        scheme: "bearer",
-        in: "header",
-      },
-    },
     servers: [
       {
         url: "http://localhost:9000/",
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
       },
     ],
   },

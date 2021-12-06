@@ -153,7 +153,7 @@ const createBeer = async (ctx) => {
 createBeer.validationScheme = {
   body: {
     name: Joi.string().max(255),
-    brewery_id: Joi.string().uuid(),
+    brewery_id: Joi.string(),
     percentage: Joi.number().min(0).max(100),
   },
 };
@@ -217,11 +217,11 @@ const updateBeer = async (ctx) => {
 };
 updateBeer.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
   body: {
     name: Joi.string().max(255),
-    brewery_id: Joi.string().uuid(),
+    brewery_id: Joi.string(),
     percentage: Joi.number().min(0).max(100),
   },
 };
@@ -249,7 +249,7 @@ const deleteBeer = async (ctx) => {
 };
 deleteBeer.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
 };
 

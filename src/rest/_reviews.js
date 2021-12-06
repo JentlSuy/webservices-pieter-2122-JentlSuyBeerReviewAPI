@@ -172,6 +172,7 @@ createReview.validationScheme = {
     description: Joi.string().max(500),
     date: Joi.date().iso().less("now"),
     beerId: Joi.string().uuid(),
+    userId: Joi.string(),
   },
 };
 
@@ -237,13 +238,14 @@ const updateReview = async (ctx) => {
 };
 updateReview.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
   body: {
     rating: Joi.number().min(0).max(5),
     description: Joi.string().max(500),
     date: Joi.date().iso().less("now"),
     beerId: Joi.string().uuid(),
+    userId: Joi.string(),
   },
 };
 
@@ -270,7 +272,7 @@ const deleteReview = async (ctx) => {
 };
 deleteReview.validationScheme = {
   params: {
-    id: Joi.string().uuid(),
+    id: Joi.string(),
   },
 };
 
@@ -284,11 +286,36 @@ module.exports = (app) => {
     prefix: "/reviews",
   });
 
-  router.get('/', requireAuthentication, validate(getAllReviews.validationScheme), getAllReviews);
-  router.post('/', requireAuthentication, validate(createReview.validationScheme), createReview);
-  router.get('/:id', requireAuthentication, validate(getReviewById.validationScheme), getReviewById);
-  router.put('/:id', requireAuthentication, validate(updateReview.validationScheme), updateReview);
-  router.delete('/:id', requireAuthentication, validate(deleteReview.validationScheme), deleteReview);
+  router.get(
+    "/",
+    requireAuthentication,
+    validate(getAllReviews.validationScheme),
+    getAllReviews
+  );
+  router.post(
+    "/",
+    requireAuthentication,
+    validate(createReview.validationScheme),
+    createReview
+  );
+  router.get(
+    "/:id",
+    requireAuthentication,
+    validate(getReviewById.validationScheme),
+    getReviewById
+  );
+  router.put(
+    "/:id",
+    requireAuthentication,
+    validate(updateReview.validationScheme),
+    updateReview
+  );
+  router.delete(
+    "/:id",
+    requireAuthentication,
+    validate(deleteReview.validationScheme),
+    deleteReview
+  );
 
   app.use(router.routes()).use(router.allowedMethods());
 };
