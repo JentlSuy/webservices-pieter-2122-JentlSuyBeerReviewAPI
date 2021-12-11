@@ -104,10 +104,6 @@ const validate = require("./_validation.js");
  *                 type: string
  *                 format: uuid
  *                 example: "7f28c5f9-d711-4cd6-ac15-d13d71abbe01"
- *               userId:
- *                 type: string
- *                 format: uuid
- *                 example: "7f28c5f9-d711-4cd6-ac15-d13d71abus01"
  */
 
 /**
@@ -161,6 +157,7 @@ getAllReviews.validationScheme = {
 const createReview = async (ctx) => {
   const newReview = await reviewService.create({
     ...ctx.request.body,
+    userId: ctx.state.session.userId,
     date: new Date(ctx.request.body.date),
   });
   ctx.body = newReview;
@@ -172,7 +169,6 @@ createReview.validationScheme = {
     description: Joi.string().max(500),
     date: Joi.date().iso().less("now"),
     beerId: Joi.string().uuid(),
-    userId: Joi.string(),
   },
 };
 
@@ -233,6 +229,7 @@ getReviewById.validationScheme = {
 const updateReview = async (ctx) => {
   ctx.body = await reviewService.updateById(ctx.params.id, {
     ...ctx.request.body,
+    userId: ctx.state.session.userId,
     date: new Date(ctx.request.body.date),
   });
 };
@@ -245,7 +242,6 @@ updateReview.validationScheme = {
     description: Joi.string().max(500),
     date: Joi.date().iso().less("now"),
     beerId: Joi.string().uuid(),
-    userId: Joi.string(),
   },
 };
 

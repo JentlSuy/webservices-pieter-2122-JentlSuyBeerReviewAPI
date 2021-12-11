@@ -308,18 +308,21 @@ module.exports = function installUsersRoutes(app) {
   router.get(
     "/:id",
     requireAuthentication,
+    requireAdmin,
     validate(getUserById.validationScheme),
     getUserById
   );
   router.put(
     "/:id",
     requireAuthentication,
+    requireAdmin,
     validate(updateUserById.validationScheme),
     updateUserById
   );
   router.delete(
     "/:id",
     requireAuthentication,
+    requireAdmin,
     validate(deleteUserById.validationScheme),
     deleteUserById
   );
