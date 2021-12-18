@@ -199,7 +199,6 @@ describe("Reviews", () => {
           description: "Geen fan van Maes.",
           date: "2021-05-27T13:00:00.000Z",
           beerId: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
-          userId: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
         });
 
       expect(response.status).toBe(201);
@@ -251,7 +250,6 @@ describe("Reviews", () => {
           description: "Geen fan van Maes.",
           date: "2020-05-27T13:00:00.000Z",
           beerId: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
-          userId: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
         });
 
       expect(response.status).toBe(200);

@@ -7,7 +7,8 @@
     "start": "npx env-cmd nodemon src/index.js",
     "test": "npx env-cmd -f .env.test jest --runInBand",
     "test:coverage": "yarn test --coverage",
-    "lint": "npx eslint . --fix"
+    "lint": "npx eslint . --fix",
+    "test:ci": "jest"
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
