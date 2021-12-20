@@ -13,7 +13,7 @@ const { initializeData, shutdownData } = require("./data");
 const installRest = require("./rest");
 const swaggerOptions = require("./swagger.config");
 
-const PORT = config.get("port");
+var PORT = config.get("port");
 const HOST = config.get("host");
 const PROTOCOL = config.get("protocol");
 const NODE_ENV = config.get("env");
@@ -151,6 +151,7 @@ module.exports = async function createServer() {
     //async start(){
     start() {
       return new Promise((resolve) => {
+        PORT = process.env.PORT || PORT;
         app.listen(PORT);
         logger.info(`Server listening on ${PROTOCOL}://${HOST}:${PORT}`);
         resolve();
