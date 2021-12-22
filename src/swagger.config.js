@@ -18,7 +18,7 @@ module.exports = {
     },
     servers: [
       {
-        url: "http://localhost:9000/",
+        url: "https://jentlsuy-beerreview-api.herokuapp.com",
       },
     ],
     components: {
