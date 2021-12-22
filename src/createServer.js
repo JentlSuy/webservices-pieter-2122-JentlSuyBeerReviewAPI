@@ -129,6 +129,10 @@ module.exports = async function createServer() {
 
   // Initializing SwaggerUI
   const spec = swaggerJsdoc(swaggerOptions);
+  if (NODE_ENV === "production")
+    spec.servers[0] = { url: "https://jentlsuy-beerreview-api.herokuapp.com" };
+  console.log(spec.servers);
+
   app.use(
     koaSwagger({
       routePrefix: "/swagger", // host at /swagger instead of default /docs
