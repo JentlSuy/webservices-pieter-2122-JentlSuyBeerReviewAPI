@@ -131,7 +131,8 @@ module.exports = async function createServer() {
   const spec = swaggerJsdoc(swaggerOptions);
   if (NODE_ENV === "production")
     spec.servers[0] = { url: "https://jentlsuy-beerreview-api.herokuapp.com" };
-  console.log(spec.servers);
+  else spec.servers[0] = { url: `${PROTOCOL}://${HOST}:${PORT}` };
+  console.log("Swagger is connected with", spec.servers, `-> Accessible at ${PROTOCOL}://${HOST}:${PORT}/swagger`);
 
   app.use(
     koaSwagger({
