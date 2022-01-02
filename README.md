@@ -35,7 +35,7 @@ join breweries br on br.id = be.brewery_id;
 
 ## Hosted onine
 
-The API is hosted online and is accessible via [https://jentlsuy-beerreview-api.herokuapp.com/swagger](url) or via Postman.
+The API is hosted online and is accessible via https://jentlsuy-beerreview-api.herokuapp.com/swagger or via Postman.
 
 ## How to start locally
 
@@ -58,7 +58,7 @@ Note that the app is tested with the `--runInBand` CLI flag to prevent Jest from
 
 ## Swagger
 
-Note that Swagger is included with this API. To use Swagger, simply go to [http://localhost:9000/swagger](url) to view all the existing API-calls or go to [https://jentlsuy-beerreview-api.herokuapp.com/swagger](url) to access the hosted version.
+Note that Swagger is included with this API. To use Swagger, simply go to http://localhost:9000/swagger to view all the existing API-calls or go to https://jentlsuy-beerreview-api.herokuapp.com/swagger to access the hosted version.
 
 ## How to log-in
 
