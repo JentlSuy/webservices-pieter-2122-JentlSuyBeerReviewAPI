@@ -2,6 +2,8 @@
 
 # BeerReview API - Jentl Suy
 
+School result: 17/20
+
 ## The idea
 
 The api provides a list of beers along with their breweries. The idea is that users can review their favorite beer by giving them a rating.
