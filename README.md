@@ -37,11 +37,16 @@ join breweries br on br.id = be.brewery_id;
 
 ## Hosted onine
 
-The API is hosted online and is accessible via https://jentlsuy-beerreview-api.herokuapp.com/swagger or via Postman.
+~~The API is hosted online and is accessible via https://jentlsuy-beerreview-api.herokuapp.com/swagger or via Postman.~~
 
 ## How to start locally
 
-To start this API locally, check the `.env` file in the root of this folder.
+1. Have MySQL server installed: [https://dev.mysql.com/downloads/mysql/](https://dev.mysql.com/downloads/mysql/).
+	* [Optional] Have MySQL Workbench installed: [https://dev.mysql.com/downloads/workbench/](https://dev.mysql.com/downloads/workbench/)
+3. Run a local MySQL server instance
+4. Have NodeJS installed: [https://nodejs.org/en/](https://nodejs.org/en/)
+5. Have yarn installed: [https://classic.yarnpkg.com/lang/en/docs/install/](https://classic.yarnpkg.com/lang/en/docs/install/)
+6. Check the `.env` file in the root of this folder.
 
 ```
 NODE_ENV="development"
@@ -49,9 +54,13 @@ DATABASE_USERNAME="root"
 DATABASE_PASSWORD="root"
 ```
 
-Update the username and password with the credentials of your local database.
+Update the username and password with the credentials of your local MySQL server database.
 
-Run the app with `yarn start`.
+6. Run the following command on the root folder of this project in a terminal window or in Visual Studio Code:
+```
+yarn start
+```  
+> Error? Check the 'Common errors' section below.
 
 ## How to test
 
@@ -60,7 +69,7 @@ Note that the app is tested with the `--runInBand` CLI flag to prevent Jest from
 
 ## Swagger
 
-Note that Swagger is included with this API. To use Swagger, simply go to http://localhost:9000/swagger to view all the existing API-calls or go to https://jentlsuy-beerreview-api.herokuapp.com/swagger to access the hosted version.
+Note that Swagger is included with this API. To use Swagger, simply go to http://localhost:9000/swagger to view all the existing API-calls ~~or go to https://jentlsuy-beerreview-api.herokuapp.com/swagger to access the hosted version.~~
 
 ## How to log-in
 
